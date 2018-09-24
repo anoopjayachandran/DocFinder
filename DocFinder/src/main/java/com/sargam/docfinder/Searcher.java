@@ -20,6 +20,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 
 import org.apache.lucene.store.FSDirectory;
@@ -30,30 +31,31 @@ import org.apache.lucene.store.FSDirectory;
  */
 public class Searcher {
 
-    IndexSearcher indexSearcher;
-    QueryParser queryParser;
-    Query query;
+  IndexSearcher indexSearcher;
+  QueryParser queryParser;
+  Query query;
 
-    public Searcher(String indexDirectoryPath)
-            throws IOException {
+  public Searcher(String indexDirectoryPath)
+          throws IOException {
 
-        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexDirectoryPath)));
-        indexSearcher = new IndexSearcher(reader);
-        Analyzer analyzer = new StandardAnalyzer();
+    IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexDirectoryPath)));
+    indexSearcher = new IndexSearcher(reader);
+    Analyzer analyzer = new StandardAnalyzer();
 
-        queryParser = new QueryParser(LuceneConstants.CONTENTS, analyzer);
+    queryParser = new QueryParser(SystemConstant.SKILL, analyzer);
 
-    }
+  }
 
-    public TopDocs search(String searchQuery)
-            throws IOException, ParseException {
-        query = queryParser.parse(searchQuery);
-        return indexSearcher.search(query, LuceneConstants.MAX_SEARCH);
-    }
+  public TopDocs search(String searchQuery)
+          throws IOException, ParseException {
+    query = queryParser.parse(searchQuery);
+    //int count = indexSearcher.count(query);
+    return indexSearcher.search(query, SystemConstant.MAX_SEARCH);
+  }
 
-    public Document getDocument(ScoreDoc scoreDoc)
-            throws CorruptIndexException, IOException {
-        return indexSearcher.doc(scoreDoc.doc);
-    }
+  public Document getDocument(ScoreDoc scoreDoc)
+          throws CorruptIndexException, IOException {
+    return indexSearcher.doc(scoreDoc.doc);
+  }
 
 }
